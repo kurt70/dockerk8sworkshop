@@ -1,0 +1,1 @@
+docker build -t kurtmonge/pi-calculator-api:latest -t kurtmonge/pi-calculator-api:1 .

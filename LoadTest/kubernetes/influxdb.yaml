@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: influxdb
+    grp: tick
+  name: influxdb
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 8086
+    nodePort: 30086
+    targetPort: http
+  - name: rpc
+    port: 8088
+    nodePort: 30088
+    targetPort: admin
+  selector:
+    app: influxdb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb
+  labels:
+    app: influxdb
+    grp: tick
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  replicas: 1
+  progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app: influxdb
+  template:
+    metadata:
+      labels:
+        app: influxdb
+        grp: tick
+    spec:
+      containers:
+      - name: influxdb
+        image: influxdb:1.7.6
+        ports:
+        - containerPort: 8086
+          name: "http"
+        - containerPort: 8088
+          name: "admin"
+        env:
+        - name: INFLUXDB_HTTP_ENABLED
+          value: "true"
+        - name: INFLUXDB_HTTP_BIND-ADDRESS
+          value: ":8086"
+        - name: INFLUXDB_HTTP_AUTH_ENABLED
+          value: "false"
+        - name: INFLUXDB_HTTP_HTTPS-ENABLED
+          value: "false"
+        - name: INFLUXDB_DATA_DIR
+          value: "/var/lib/influxdb/data"
+        - name: INFLUXDB_DATA_WAL_DIR
+          value: "/var/lib/influxdb/wal"
+        - name: INFLUXDB_LOGGING_LEVEL
+          value: "debug"
+        - name: HTTP_AUTH-ENABLED
+          value: "false"
+        volumeMounts:
+        - name: influxdb-data-volume
+          mountPath: /var/lib/influxdb
+          subPath: influxdb/data
+        # Chrashes if load superseedes available resources
+        # resources:
+        #   requests:
+        #     memory: "64Mi"
+        #     cpu: "125m"
+        #   limits:
+        #     memory: "64Mi"
+        #     cpu: "250m"
+      volumes:
+      - name: influxdb-data-volume
+        persistentVolumeClaim:
+          claimName: influxdb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdb
+  labels:
+    app: influxdb
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: "10Gi"
