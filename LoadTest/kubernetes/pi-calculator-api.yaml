@@ -1,4 +1,22 @@
 apiVersion: v1
+kind: Secret
+metadata:
+  name: influxdb-secrets
+data:
+  InfluxDbConfig__UserName: ""
+  InfluxDbConfig__Password: ""
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: influxdb-config
+data:
+  InfluxDbConfig__DatabaseInfo__DatabaseName: api_info
+  InfluxDbConfig__DatabaseInfo__RetentionPolicyName: short
+  InfluxDbConfig__DatabaseInfo__RetentionString: 1h
+  InfluxDbConfig__Url: "http://influxdb:$(INFLUXDB_SERVICE_PORT)"
+---
+apiVersion: v1
 kind: Service
 metadata:
   labels:
@@ -39,26 +57,35 @@ spec:
       containers:
       - name: pi-calculator-api
         image: kurtmonge/pi-calculator-api:latest
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: influxdb-config
+          - secretRef:
+              name: influxdb-secrets
         ports:
         - containerPort: 80
           name: "http"
-        env:
-        - name: InfluxDbConfig__Url
-          value: "http://influxdb:$(INFLUXDB_SERVICE_PORT)"
-        - name: InfluxDbConfig__UserName
-          value: ""
-        - name: InfluxDbConfig__Password
-          value: ""
-        - name: InfluxDbConfig__DatabaseInfo__DatabaseName
-          value: "api_info"
-        - name: InfluxDbConfig__DatabaseInfo__RetentionPolicyName
-          value: "short"
-        - name: InfluxDbConfig__DatabaseInfo__RetentionString
-          value: "1h"
-        resources:
+        #resources:
           # requests:
           #   memory: "64Mi"
           #   cpu: "50m"
           # limits:
           #   memory: "32Mi"
           #   cpu: "100m"
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  annotations:
+    autoscaling.alpha.kubernetes.io/current-metrics: '[{"type":"Resource","resource":{"name":"cpu","currentAverageUtilization":0,"currentAverageValue":"0"}}]'
+  name: pi-calculator-api
+  namespace: default
+spec:
+  minReplicas: 1
+  maxReplicas: 10
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: pi-calculator-api
+  targetCPUUtilizationPercentage: 80 # This is of the resources: requests: cpu and not the limit.
