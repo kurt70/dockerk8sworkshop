@@ -14,7 +14,7 @@ data:
   InfluxDbConfig__DatabaseInfo__DatabaseName: api_info
   InfluxDbConfig__DatabaseInfo__RetentionPolicyName: short
   InfluxDbConfig__DatabaseInfo__RetentionString: 1h
-  InfluxDbConfig__Url: "http://influxdb:$(INFLUXDB_SERVICE_PORT)"
+  InfluxDbConfig__Url: "http://influxdb:8086"
 ---
 apiVersion: v1
 kind: Service
@@ -58,14 +58,14 @@ spec:
       - name: pi-calculator-api
         image: kurtmonge/pi-calculator-api:latest
         imagePullPolicy: Always
-        envFrom:
-          - configMapRef:
-              name: influxdb-config
-          - secretRef:
-              name: influxdb-secrets
         ports:
         - containerPort: 80
           name: "http"
+        envFrom:
+          - configMapRef:
+              name: influxdb-config
+          - secretRef:
+              name: influxdb-secrets                
         #resources:
           # requests:
           #   memory: "64Mi"
