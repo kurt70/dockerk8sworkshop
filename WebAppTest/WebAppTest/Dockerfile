@@ -6,7 +6,7 @@ WORKDIR /src
 COPY . .
 RUN dotnet publish "WebAppTest.csproj" -c Release -o /app
 
-FROM  mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM  mcr.microsoft.com/dotnet/core/aspnet:2.2
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
