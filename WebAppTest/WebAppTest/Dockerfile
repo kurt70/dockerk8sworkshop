@@ -1,19 +1,14 @@
 #Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
 #For more information, please see https://aka.ms/containercompat
 
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet publish "WebAppTest.csproj" -c Release -o /app
+
 FROM  mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
-WORKDIR /src
-COPY . .
-
-FROM build AS publish
-RUN dotnet publish "WebAppTest.csproj" -c Release -o /app
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app .
+COPY --from=build /app .
 ENTRYPOINT ["dotnet", "WebAppTest.dll"]
