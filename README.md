@@ -6,8 +6,5 @@ This part of the workshop will give a light introduction to containerization and
 This exercise will be to pull down an image from dockerhub. In any terminal of your choice, simply write:   
 
 ```dockerfile
-FROM
-if (isAwesome){
-  return true
-}
+docker pull hello-world
 ```
