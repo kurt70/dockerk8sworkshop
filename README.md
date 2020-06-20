@@ -14,7 +14,11 @@ You should now see the following text in the terminal:
 Hello from Docker!
 This message shows that your installation appears to be working correctly.
 
-To generate this message, Docker took the following steps:
+...
+
+
+It also informs us about what Docker did for us just now:
+
  1. The Docker client contacted the Docker daemon.
  2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
     (amd64)
@@ -30,4 +34,8 @@ An interactive session, starting at the bash terminal, can be created for those 
 ```dockerfile
 docker run -it ubuntu bash
 ```
+
+###Exercise 1.1 Build an image 
+
+
 
