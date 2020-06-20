@@ -29,13 +29,16 @@ It also informs us about what Docker did for us just now:
 
 Notice that it downloads a set of layers that make up the image.
 
-### Interaktiv session
-An interactive session, starting at the bash terminal, can be created for those images that have the shell installed. It is is started with:
+### Interactive session
+An interactive session, starting at the bash terminal, can be created for those images that have the shell installed
 ```dockerfile
 docker run -it ubuntu bash
 ```
 
-###Exercise 1.1 Build an image 
+Notice that since we did not have the ubuntu image locally it did an implicit pull of that image for us. 
+ 
+###Exercise 1.1 Build WebAppTest
+Images are created from Dockerfiles, where steps for creating your own image is done on top of a base image. In this project we find a Dockerfile using two separate base images.      
 
 
 
