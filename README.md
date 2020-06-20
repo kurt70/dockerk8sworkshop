@@ -37,7 +37,7 @@ docker run -it ubuntu bash
 
 Notice that since we did not have the ubuntu image locally it did an implicit pull of that image for us. 
  
-###Exercise 1.1 Build WebAppTest
+### Exercise 1.1 Build WebAppTest
 Images are created from Dockerfiles, where steps for creating your own image is done on top of a base image. In this project we find a Dockerfile using two separate base images.      
 
 
