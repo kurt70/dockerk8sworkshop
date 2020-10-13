@@ -1,0 +1,1 @@
+docker build -t kurtmonge/webapptest:latest -t kurtmonge/webapptest:1 .
