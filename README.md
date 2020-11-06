@@ -1,5 +1,16 @@
 # Docker
-This part of the workshop will give a light introduction to containerization and the docker technology. 
+This part of the workshop will give a light introduction to the docker containerization technology.
+
+ 
+Docker´s architecture consists of 3 entities, which are the docker client, a docker deamon and a docker registry. 
+
+Both the client and the deamon are running on your local machine, while a registry is either running on a private or public network. 
+
+Dockerhub is for instance a registry on a public network.
+
+The client is the command line tool you are using to issue docker commands. 
+
+The commands in turn issue HTTP requests to the docker deamon      
  
 ## step 1: Hello World 
 This exercise will be to pull down an image from dockerhub and run it locally. In any terminal of your choice, simply write:   
