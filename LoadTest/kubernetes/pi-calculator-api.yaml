@@ -65,7 +65,7 @@ spec:
           - configMapRef:
               name: influxdb-config
           - secretRef:
-              name: influxdb-secrets                
+              name: influxdb-secrets
         #resources:
           # requests:
           #   memory: "64Mi"
