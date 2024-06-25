@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-red
+  labels:
+    app: node-red
+spec:
+  containers:
+  - name: node-red
+    image: nodered/node-red:latest
+    ports:
+    - containerPort: 1880
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    volumeMounts:
+    - name: node-red-data
+      mountPath: /data
+  volumes:
+  - name: node-red-data
+    emptyDir: {}

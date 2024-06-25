@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: simple-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: simple-cronjob
+            image: busybox
+            command: ["sh", "-c", "echo Hello, Kubernetes! This is a cron job! && sleep 30"]
+          restartPolicy: OnFailure
+  successfulJobsHistoryLimit: 4
+  failedJobsHistoryLimit: 1

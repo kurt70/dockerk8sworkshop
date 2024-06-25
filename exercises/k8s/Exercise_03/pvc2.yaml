@@ -1,0 +1,13 @@
+#pre-binding
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node-red-pvc
+spec:
+  volumeName: node-red-pv
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

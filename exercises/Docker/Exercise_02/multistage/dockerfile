@@ -1,0 +1,35 @@
+# Bygg fasen
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+
+# Sett arbeidskatalogen i containeren
+WORKDIR /app
+
+# Scaffold en ny Blazor WebAssembly app
+RUN dotnet new blazorwasm -o BlazorApp
+
+# Sett arbeidskatalogen til den genererte Blazor-prosjektet
+WORKDIR /app/BlazorApp
+
+# Bygg appen
+RUN dotnet publish -c Release -o out
+
+# Nginx fasen
+FROM nginx:alpine
+
+# Sett arbeidskatalogen
+WORKDIR /usr/share/nginx/html
+
+# Fjern standardinnholdet
+RUN rm -rf ./*
+
+# Kopier bygget output fra dotnet-publish steget
+COPY --from=build-env /app/BlazorApp/out/wwwroot .
+
+# Kopier Nginx konfigurasjonsfil
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Eksponer port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

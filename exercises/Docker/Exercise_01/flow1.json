@@ -1,0 +1,49 @@
+[
+    {
+        "id": "http_in",
+        "type": "http in",
+        "z": "flow_id",
+        "name": "",
+        "url": "/api/simple-json",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "function"
+            ]
+        ]
+    },
+    {
+        "id": "function",
+        "type": "function",
+        "z": "flow_id",
+        "name": "Create JSON response",
+        "func": "msg.payload = {\n    message: \"Hello, this is a simple JSON response\",\n    status: \"success\"\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "http_response"
+            ]
+        ]
+    },
+    {
+        "id": "http_response",
+        "type": "http response",
+        "z": "flow_id",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 570,
+        "y": 120,
+        "wires": []
+    }
+]

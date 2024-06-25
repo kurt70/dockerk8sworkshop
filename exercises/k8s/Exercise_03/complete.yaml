@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-red
+  labels:
+    app: node-red
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-red
+  template:
+    metadata:
+      labels:
+        app: node-red
+    spec:
+      initContainers:
+      - name: init-permissions
+        image: busybox
+        command: ["sh", "-c", "chmod -R 777 /data"]
+        volumeMounts:
+        - name: node-red-data
+          mountPath: /data
+      containers:
+      - name: node-red
+        image: nodered/node-red:latest
+        ports:
+        - containerPort: 1880
+        env:
+        - name: NODE_RED_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: node-red-secret
+              key: username
+        - name: NODE_RED_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: node-red-secret
+              key: password
+        - name: NODE_RED_FLOW
+          value: "/data/flow.json"
+        volumeMounts:
+        - name: node-red-data
+          mountPath: /data
+        - name: flow-config
+          mountPath: /data/flow.json
+          subPath: flow.json
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: node-red-data
+        persistentVolumeClaim:
+          claimName: node-red-pvc
+      - name: flow-config
+        configMap:
+          name: node-red-flow-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-red-service
+spec:
+  selector:
+    app: node-red
+  ports:
+  - protocol: TCP
+    port: 1880
+    targetPort: 1880
+  type: LoadBalancer
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: node-red-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: node-red
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-red-flow-config
+data:
+  flow.json: |
+    [
+      {
+        "id": "1",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+      },
+      {
+        "id": "2",
+        "type": "inject",
+        "z": "1",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "x": 100,
+        "y": 100,
+        "wires": [
+          ["3"]
+        ]
+      },
+      {
+        "id": "3",
+        "type": "debug",
+        "z": "1",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "targetType": "msg",
+        "x": 250,
+        "y": 100,
+        "wires": []
+      }
+    ]
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: node-red-pv
+spec:
+  storageClassName: standard
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /mnt/data/node-red
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node-red-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node-red-secret
+type: Opaque
+data:
+  username: YWRtaW4=  # Base64 encoded value of "admin"
+  password: aGVtbWVsaWc=  # Base64 encoded value of "hemmelig"

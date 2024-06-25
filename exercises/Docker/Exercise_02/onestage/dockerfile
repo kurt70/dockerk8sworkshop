@@ -1,0 +1,23 @@
+# Bruk Microsofts offisielle .NET SDK image
+FROM mcr.microsoft.com/dotnet/sdk:6.0
+
+# Sett arbeidskatalogen i containeren
+WORKDIR /app
+
+# Scaffold en ny Blazor WebAssembly app
+RUN dotnet new blazorserver -o BlazorServer
+
+# Sett arbeidskatalogen til den genererte Blazor-prosjektet
+WORKDIR /app/BlazorServer
+
+# Bygg appen
+RUN dotnet publish -c Release -o out
+
+# Endre arbeidskatalogen til publikasjonens ut-mappe
+WORKDIR /app/BlazorServer/out
+
+# Eksponer port 80
+EXPOSE 80
+
+# Start appen
+ENTRYPOINT ["dotnet", "BlazorServer.dll"]
