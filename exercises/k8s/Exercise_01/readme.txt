@@ -1,8 +1,5 @@
 #Pods, Deployments, Replicasets, HPA
 
-# Start Minikube med 3 noder og en profilnavn "multinode-demo"
-minikube start --nodes 3 -p multinode-demo
-
 kubectl apply -f pod.yaml
 kubectl get pods
 kubectl delete -f pod.yaml
