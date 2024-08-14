@@ -3,16 +3,16 @@
 #Engangsjobb
 kubectl apply -f simple-job.yaml
 
-#Conjobb - kjører hvert sekunde
+#Conjobb - kjører hvert sekund
 kubectl apply -f simple-cronjob.yaml
 
 klubectl logs job/xxxxxxxxxxxx
 
 # Stoppe Minikube-klusteret
-minikube stop -p multinode-demo
+minikube stop 
 
 # Slette Minikube-klusteret
-minikube delete -p multinode-demo
+minikube delete
 
 # Rydde opp etter Minikube (slette alle Minikube-klynger)
 minikube delete --all

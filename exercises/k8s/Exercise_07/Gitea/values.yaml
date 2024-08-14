@@ -1,0 +1,23 @@
+replicaCount: 1
+
+persistence:
+  enabled: true
+  size: 5Gi
+
+postgresql:
+  enabled: true
+  postgresqlPassword: mysecretpassword
+
+service:
+  http:
+    type: NodePort
+    port: 3000
+
+gitea:
+  admin:
+    username: admin
+    password: adminpassword
+    email: admin@example.com
+  config:
+    server:
+      SSH_PORT: 2222

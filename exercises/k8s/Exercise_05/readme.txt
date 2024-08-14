@@ -1,6 +1,6 @@
 #Ingress
 
-minikube addons enable ingress -p multinode-demo
+minikube addons enable ingress
 
 kubectl apply -f node-app.yaml
 
