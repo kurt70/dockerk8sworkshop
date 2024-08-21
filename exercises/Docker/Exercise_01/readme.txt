@@ -13,7 +13,9 @@ docker logs mynodered
 #Gå rett inn i en kontainer med base image
 docker run -it --rm --name myubuntu ubuntu bash
 
-docker exec -it ubunto --name myubuntu
+docker exec -it ubuntu --name myubuntu
+
+skriv 'exit' for å gå ut|
 
 http://localhost:1880
 

@@ -2,7 +2,7 @@
 
 #I onstage
 docker build -t onestage-blazor-server .
-docker run --rm -d -p 8080:80 --name blazorapp1 onestage-blazor-server
+docker run --rm -d -p 8080:5000 --name blazorapp1 onestage-blazor-server
 
 #I multistage
 docker build -t multistage-blazor-app .

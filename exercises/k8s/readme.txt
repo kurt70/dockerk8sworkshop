@@ -14,6 +14,5 @@ minikube image load docker.elastic.co/elasticsearch/elasticsearch:7.10.1
 minikube image load fluent/fluentd:v1.12-debian-1
 minikube image load docker.elastic.co/kibana/kibana:7.10.1
 minikube image load node:14
-minikube image load busybox
 
 #Excercise 7 - 8 er ikke ferdige. Men vi kan se på de hvis det blir tid.
